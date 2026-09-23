@@ -1,0 +1,18 @@
+import axi_test_lib_pkg::*;
+
+
+`include "uvm_macros.svh"
+import uvm_pkg::*;
+
+module tb_top;
+
+
+  initial begin
+  
+    run_test("axi_base_test");
+
+  end
+
+
+
+endmodule

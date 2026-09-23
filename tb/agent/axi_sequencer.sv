@@ -1,0 +1,36 @@
+
+class axi_sequencer extends uvm_sequencer#(axi_seq_item);
+
+  //Factory Registration
+
+  `uvm_component_utils(axi_sequencer)
+
+  //Constructor
+
+  function new(string name = "axi_sequencer", uvm_component parent = null);
+    super.new(name, parent);
+  endfunction
+
+
+  // Build Phase 
+
+  function void build_phase(uvm_phase phase);
+    super.build_phase(phase);
+    `uvm_info(get_type_name(), "INSIDE SEQUENCER BUILD PHASE", UVM_LOW)
+  endfunction
+
+ // connect Phase 
+
+  function void connect_phase(uvm_phase phase);
+    super.connect_phase(phase);
+    `uvm_info(get_type_name(), "INSIDE SEQUENCER CONNECT PHASE", UVM_LOW)
+  endfunction
+
+ // Build Phase 
+
+  task run_phase(uvm_phase phase);
+    
+    `uvm_info(get_type_name(), "INSIDE SEQUENCER RUN PHASE", UVM_LOW)
+  endtask
+  
+endclass
