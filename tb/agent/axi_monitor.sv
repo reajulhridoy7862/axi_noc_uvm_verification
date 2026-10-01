@@ -26,12 +26,20 @@ class axi_monitor extends uvm_monitor;
 
   function void connect_phase(uvm_phase phase);
     super.connect_phase(phase);
+
+    if (!uvm_config_db#(virtual axi_if)::get(this, "", "vif", vif))
+      `uvm_fatal("NO_VIF", "Virtual interface not found")
+
     `uvm_info(get_type_name(), "INSIDE MONITOR CONNECT PHASE", UVM_LOW)
   endfunction
 
  // RUN Phase 
 
   task run_phase(uvm_phase phase);
+
+
+    forever begin
+
 
     `uvm_info(get_type_name(), "INSIDE MONITOR RUN PHASE", UVM_LOW)
   endtask
