@@ -5,7 +5,7 @@ class axi_agent extends uvm_agent;
 
   axi_driver drv;
   axi_sequencer seqr;
-  axi_monitor mon;
+//  axi_monitor mon;
 
   function new(string name = "axi_agent", uvm_component parent = null);
     super.new(name, parent);
@@ -18,7 +18,7 @@ class axi_agent extends uvm_agent;
 
     drv = axi_driver::type_id::create("drv", this);
 
-    mon = axi_monitor::type_id::create("mon", this);
+  //  mon = axi_monitor::type_id::create("mon", this);
 
     seqr = axi_sequencer::type_id::create("seqr", this);
     

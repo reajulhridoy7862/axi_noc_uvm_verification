@@ -10,14 +10,14 @@ interface axi_if(input logic clk);
   logic [SIZE_WIDTH-1:0] awsize;
   logic [1:0]            awburst;
   logic                  awvalid;
-  logic                  awready = 0;
+  logic                  awready = 1;
 
   // Write Data Channel (W)
   logic [DATA_WIDTH-1:0] wdata;
   logic [STRB_WIDTH-1:0] wstrb;
   logic                  wlast;
   logic                  wvalid;
-  logic                  wready = 0;
+  logic                  wready = 1;
 
   // Write Response Channel (B)
   logic [ID_WIDTH-1:0]   bid;
@@ -32,7 +32,7 @@ interface axi_if(input logic clk);
   logic [SIZE_WIDTH-1:0] arsize;
   logic [1:0]            arburst;
   logic                  arvalid;
-  logic                  arready = 0;
+  logic                  arready = 1;
 
   // Read Data Channel (R)
   logic [ID_WIDTH-1:0]   rid;

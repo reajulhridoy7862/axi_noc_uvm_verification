@@ -52,9 +52,9 @@ class axi_seq_item extends uvm_sequence_item;
 
      for (i = 0; i < num_beats; i++) begin
        wdata_q.push_back(base_data + i);
-
       wstrb_q.push_back({STRB_WIDTH{1'b1}}); 
      end 
+
   endfunction
 
   function int get_write_beats();

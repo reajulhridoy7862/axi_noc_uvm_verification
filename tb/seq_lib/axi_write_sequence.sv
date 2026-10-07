@@ -22,7 +22,6 @@ class axi_write_sequence extends axi_base_sequence;
     req.kind = axi_seq_item::AXI_WRITE;
     req.awid = id;
     req.awaddr = addr;
-    req.wdata = data;
     req.awlen = len;
     req.awburst = 2'b01; //incremental
     req.awsize = 3'd2;

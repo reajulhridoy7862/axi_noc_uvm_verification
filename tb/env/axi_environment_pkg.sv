@@ -5,6 +5,7 @@ package axi_environment_pkg;
   import axi_agent_pkg::*;
 
   `include "axi_scoreboard.sv"
+  `include "axi_ref_model.sv"
   `include "axi_environment.sv"
 
 endpackage

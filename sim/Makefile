@@ -23,7 +23,7 @@ TEST ?=axi_base_test
 # Can be overridden from command line:
 # make run VERBOSITY=UVM_HIGH
 
-VERBOSITY ?= UVM_LOW
+VERBOSITY ?= UVM_HIGH
 
 # Compilation options
 XVLOG_OPTS = -sv \
