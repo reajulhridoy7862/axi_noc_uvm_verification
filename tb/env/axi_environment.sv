@@ -3,7 +3,7 @@ class axi_environment extends uvm_env;
 
   `uvm_component_utils(axi_environment )
 
-  axi_agent agt;
+  axi_agent agt[4];
   axi_scoreboard sb;
   axi_ref_model ref_model;
 
@@ -17,7 +17,11 @@ class axi_environment extends uvm_env;
 
     `uvm_info(get_type_name(), "INSIDE ENVIRONMENT BUILD PHASE", UVM_LOW)
 
-    agt = axi_agent::type_id::create("agt", this);
+    for (int i= 0; i<NUM_MASTERS; i++) begin
+      agt[i] = axi_agent::type_id::create($sformatf("agt[%0d]",i), this);
+    end
+
+   // agt = axi_agent::type_id::create("agt", this);
 
     sb = axi_scoreboard::type_id::create("sb", this);
 
@@ -29,10 +33,17 @@ class axi_environment extends uvm_env;
     super.connect_phase(phase);
 
     `uvm_info(get_type_name(), "INSIDE ENVIRONMENT CONNECT PHASE", UVM_LOW)
+    
+    for (int i=0; i<NUM_MASTERS; i++) begin
+      agt[i].mon.sb_port.connect(sb.act_imp);
+      agt[i].mon.ref_port.connect(ref_model.analysis_export);
+    end
+
+    
 
 //    agt.mon.sb_port.connect(sb.act_imp);
 //    agt.mon.ref_port.connect(ref_model.analysis_export);
-//    ref_model.exp_port.connect(sb.exp_imp);
+    ref_model.exp_port.connect(sb.exp_imp);
 
 
   endfunction
