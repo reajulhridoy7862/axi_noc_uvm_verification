@@ -22,7 +22,7 @@ class axi_read_sequence extends axi_base_sequence;
     req.arid = id; 
     req.araddr = addr;
     req.arlen = len;
-    req.arsize = 3'd2;
+    req.arsize = 3'd3;
     req.arburst = 2'b01;
     finish_item(req);
 

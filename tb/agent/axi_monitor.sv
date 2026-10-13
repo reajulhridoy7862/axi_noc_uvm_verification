@@ -3,6 +3,7 @@ class axi_monitor extends uvm_monitor;
   `uvm_component_utils(axi_monitor)
 
   virtual axi_if vif;
+  int unsigned master_id;
 
   uvm_analysis_port #(axi_seq_item) sb_port;
   uvm_analysis_port #(axi_seq_item) ref_port;
@@ -33,6 +34,10 @@ class axi_monitor extends uvm_monitor;
 
     if (!uvm_config_db#(virtual axi_if)::get(this, "", "vif", vif))
       `uvm_fatal("NO_VIF", "Virtual interface not found")
+
+    if (!uvm_config_db#(int unsigned)::get(this, "", "master_id", master_id))
+    `uvm_fatal("NO_MASTER_ID", "Master ID not found")
+
   endfunction
 
   // Run phase: ONE process, fixed channel order every cycle
@@ -61,6 +66,7 @@ class axi_monitor extends uvm_monitor;
 
     if (vif.awvalid && vif.awready) begin
       tr = axi_seq_item::type_id::create("aw_tr");
+      tr.master_id = master_id;
 
       tr.kind    = axi_seq_item::AXI_WRITE;
       tr.awid    = vif.awid;
@@ -88,8 +94,8 @@ class axi_monitor extends uvm_monitor;
       cur_w.wdata_q.push_back(vif.wdata);
       cur_w.wstrb_q.push_back(vif.wstrb);
 
-      `uvm_info("MON_W", $sformatf("W HANDSHAKE: DATA=%h STRB=%h WLAST=%0d BEAT=%0d",
-                vif.wdata, vif.wstrb, vif.wlast, cur_w.wdata_q.size() - 1), UVM_HIGH)
+      `uvm_info("MON_W", $sformatf("W HANDSHAKE: DATA=%h STRB=%h WLAST=%0d BEAT=%0d ADDR=%h",
+                vif.wdata, vif.wstrb, vif.wlast, cur_w.wdata_q.size() - 1, vif.awaddr), UVM_HIGH)
 
       if (vif.wlast) begin
         w_burst_q.push_back(cur_w);
@@ -123,6 +129,7 @@ class axi_monitor extends uvm_monitor;
 
     if (vif.arvalid && vif.arready) begin
       tr = axi_seq_item::type_id::create("ar_tr");
+      tr.master_id = master_id;
 
       tr.kind    = axi_seq_item::AXI_READ;
       tr.arid    = vif.arid;

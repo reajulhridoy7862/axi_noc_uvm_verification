@@ -24,7 +24,7 @@ class axi_write_sequence extends axi_base_sequence;
     req.awaddr = addr;
     req.awlen = len;
     req.awburst = 2'b01; //incremental
-    req.awsize = 3'd2;
+    req.awsize = 3'd3;
     req.build_write_data(data);
     finish_item(req);
 

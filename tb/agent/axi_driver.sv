@@ -4,6 +4,9 @@ class axi_driver extends uvm_driver #(axi_seq_item);
   `uvm_component_utils(axi_driver)
 
   virtual axi_if vif;
+  virtual clk_rst_if rst_vif;
+
+  int unsigned  master_id;
 
   localparam int READY_TIMEOUT = 100;  
   localparam int RESET_CYCLES  = 3;
@@ -33,14 +36,21 @@ class axi_driver extends uvm_driver #(axi_seq_item);
 
   function void connect_phase(uvm_phase phase);
     super.connect_phase(phase);
+    if (!uvm_config_db#(virtual clk_rst_if)::get(this, "", "rst_vif", rst_vif))
+      `uvm_fatal("NO_RST_VIF", "clk_rst_if virtual interface not found")
+
     if (!uvm_config_db#(virtual axi_if)::get(this, "", "vif", vif))
       `uvm_fatal("NO_VIF", "Virtual interface not found")
+
+    if (!uvm_config_db#(int unsigned)::get(this, "", "master_id", master_id)) 
+      `uvm_fatal("NO_MASTER_ID", "Master ID not found")
   endfunction
 
   // Run phase
   task run_phase(uvm_phase phase);
     run_ph = phase;
     init_signals();
+
 
     fork
       coordinator();
@@ -75,6 +85,7 @@ class axi_driver extends uvm_driver #(axi_seq_item);
         end
 
         axi_seq_item::AXI_WRITE: begin
+          req.master_id = master_id;
           pending_wr++;
           run_ph.raise_objection(this, "write pending");
           aw_queue.push_back(req);
@@ -83,6 +94,7 @@ class axi_driver extends uvm_driver #(axi_seq_item);
         end
 
         axi_seq_item::AXI_READ: begin
+          req.master_id = master_id;
           pending_rd++;
           run_ph.raise_objection(this, "read pending");
           ar_queue.push_back(req);
@@ -285,11 +297,19 @@ class axi_driver extends uvm_driver #(axi_seq_item);
   // Reset: hold several cycles, flush driver state
   task drive_reset();
     `uvm_info("AXI_RESET", "Applying AXI reset", UVM_LOW)
+    `uvm_info("AXI_RESET", $sformatf("BEFORE Reset set to 0 rst_n =%0b",vif.rst_n),UVM_LOW);
+    //vif.rst_n <= 1'b0;
+    
+    `uvm_info("AXI_RESET", $sformatf("AFTER reset set to 0 rst_n =%0b",vif.rst_n),UVM_LOW);
+    //repeat (RESET_CYCLES) @(posedge vif.clk);
+    
+    `uvm_info("AXI_RESET", $sformatf("AFTER reset set to 0 rst_n =%0b",vif.rst_n),UVM_LOW);
 
-    vif.rst_n <= 1'b0;
-    repeat (RESET_CYCLES) @(posedge vif.clk);
-    vif.rst_n <= 1'b1;
-    `uvm_info("AXI_RESET", "release AXI reset", UVM_LOW)
+    //vif.rst_n <= 1'b1;
+   // wait (vif.rst_n == 1'b1);
+    //@(posedge vif.clk);
+    rst_vif.apply_reset(RESET_CYCLES);
+    `uvm_info("AXI_RESET", $sformatf("Reset is released now rst_n =%0b",vif.rst_n), UVM_LOW)
     // Drop objections for anything that was still pending, then clear state
     if (pending_wr + pending_rd > 0)
       run_ph.drop_objection(this, "reset flush", pending_wr + pending_rd);

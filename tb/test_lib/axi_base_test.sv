@@ -13,6 +13,11 @@ class axi_base_test extends uvm_test;
 
     `uvm_info(get_type_name(), "INSIDE BASE CLASS BUILD PHASE", UVM_LOW)
 
+    for (int i = 0; i < NUM_MASTERS; i++) begin
+
+      uvm_config_db#(int unsigned)::set(this,$sformatf("env.agt[%0d]",i),"master_id",i);
+    end
+
     env = axi_environment::type_id::create("env", this);
 
   endfunction

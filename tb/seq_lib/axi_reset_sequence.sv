@@ -13,7 +13,6 @@ class axi_reset_sequence extends axi_base_sequence;
 
     start_item(req);
     req.kind  = axi_seq_item::AXI_RESET;
-    req.rst_n = 1'b0;
 
     finish_item(req);
   endtask

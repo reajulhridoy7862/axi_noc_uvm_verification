@@ -1,4 +1,4 @@
-
+../tb/top/clk_rst_if.sv
 ../tb/seq_lib/axi_pkg.sv
 ../tb/top/axi_if.sv
 ../tb/seq_lib/axi_seq_lib_pkg.sv

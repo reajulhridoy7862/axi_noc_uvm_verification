@@ -9,7 +9,8 @@ class axi_seq_item extends uvm_sequence_item;
   endfunction
 
   trans_kind                    kind;
-  logic                         rst_n;
+  logic rst_n;
+  int unsigned                  master_id;
 
   //aw channel
   rand logic [ID_WIDTH-1:0]     awid;
