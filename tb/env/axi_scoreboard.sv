@@ -107,7 +107,7 @@ class axi_scoreboard extends uvm_scoreboard;
   endfunction
 
   // READ COMPARISON
-  function void compare_read( axi_seq_item exp, axi_seq_item act);
+  function void compare_read(axi_seq_item exp, axi_seq_item act);
     bit pass = 1;
     // Check ID
     if (exp.arid != act.arid) begin
@@ -155,6 +155,10 @@ class axi_scoreboard extends uvm_scoreboard;
 
         end
 
+        `uvm_info( "SB_READ", $sformatf( "=========READ PASS:======= ACT_ID=%0d EXP_ID=%0d | ACT_ADDR=%h EXP_ADDR=%h | ACT_DATA=%h EXP_DATA=%h |
+        ACT_RESP= %0d EXP_RESP=%0d| ", act.arid, exp.arid, act.araddr, exp.araddr, act.rdata_q[i], exp.rdata_q[i], act.rresp_q[i], exp.rresp_q[i]
+        ), UVM_MEDIUM)
+
       end
 
     end
@@ -165,9 +169,8 @@ class axi_scoreboard extends uvm_scoreboard;
     if (pass) begin
       rd_pass++;
 
-      `uvm_info( "SB_READ", $sformatf( "READ PASS: ID=%0d ADDR=%h", act.arid, act.araddr
-        ), UVM_MEDIUM
-      )
+//      `uvm_info( "SB_READ", $sformatf( "=========READ PASS:======= ACT_ID=%0d EXP_ID=%0d | ACT_ADDR=%h EXP_ADDR=%h | ACT_DATA=%h EXP_DATA=%h | 
+  //      ACT_RESP= %0d EXP_RESP=%0d| ", act.arid, exp.arid, act.araddr, exp.araddr, act.rdata_q[i], exp.rdata_q[i], act.rresp_q[i], exp.rresp_q[i]    ), UVM_MEDIUM)
 
     end
     else begin

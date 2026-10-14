@@ -15,5 +15,6 @@ package axi_test_lib_pkg;
 //  `include "axi_burst_read_test.sv"
   `include "axi_wr_all_after_rd_all_test.sv"
   `include "axi_wr_rd_all_addr_test.sv"
+  `include "axi_wr_rd_conc_test.sv"
 
 endpackage

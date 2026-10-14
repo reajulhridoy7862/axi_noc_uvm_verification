@@ -12,12 +12,12 @@ class axi_ref_model extends uvm_subscriber #(axi_seq_item);
   // Expected transaction -> scoreboard
   uvm_analysis_port #(axi_seq_item) exp_port;
 
-  // Address map (inclusive range)
-  localparam logic [ADDR_WIDTH-1:0] MEM_BASE = 64'h201_0000_0000;
-  localparam logic [ADDR_WIDTH-1:0] MEM_END  = 64'h201_0001_ffff;
+  localparam logic [ADDR_WIDTH-1:0] BRAM0_BASE = 64'h201_0000_0000;
+  localparam logic [ADDR_WIDTH-1:0] BRAM0_END  = 64'h201_0001_FFFF;
+  localparam logic [ADDR_WIDTH-1:0] BRAM1_BASE = 64'h201_4000_0000;
+  localparam logic [ADDR_WIDTH-1:0] BRAM1_END  = 64'h201_4001_FFFF;
 
-  // Byte-addressed memory. Bytes never written read back as 0 (BRAM init is all 0)
-  logic [7:0] mem [logic [ADDR_WIDTH-1:0]];
+  logic [63:0] mem [logic [ADDR_WIDTH-1:0]];
 
   int unsigned num_writes;
   int unsigned num_reads;
@@ -27,13 +27,11 @@ class axi_ref_model extends uvm_subscriber #(axi_seq_item);
     super.new(name, parent);
   endfunction
 
-  // Build phase
   function void build_phase(uvm_phase phase);
     super.build_phase(phase);
     exp_port = new("exp_port", this);
   endfunction
 
-  // Main entry point: one completed transaction from the monitor
   function void write(axi_seq_item tr);
     axi_seq_item exp_tr;
 
@@ -42,7 +40,7 @@ class axi_ref_model extends uvm_subscriber #(axi_seq_item);
       return;
     end
 
-    // Explicit copy
+    
     exp_tr = copy_item(tr);
 
     case (exp_tr.kind)
@@ -58,7 +56,6 @@ class axi_ref_model extends uvm_subscriber #(axi_seq_item);
     exp_port.write(exp_tr);
   endfunction
 
-  // Field-by-field copy
   function axi_seq_item copy_item(axi_seq_item t);
     axi_seq_item c;
     c = axi_seq_item::type_id::create("exp_tr");
@@ -89,12 +86,12 @@ class axi_ref_model extends uvm_subscriber #(axi_seq_item);
     return c;
   endfunction
 
-  // ADDRESS DECODE (start address of the transaction)
   function bit is_valid_address(logic [ADDR_WIDTH-1:0] addr);
-    return (addr >= MEM_BASE && addr <= MEM_END);
-  endfunction
+    return ((addr >= BRAM0_BASE && addr <= BRAM0_END) ||
+            (addr >= BRAM1_BASE && addr <= BRAM1_END)
+  );
 
-  // BURST ADDRESS CALCULATION (FIXED / INCR / WRAP)
+endfunction
   function logic [ADDR_WIDTH-1:0] get_beat_address(
     logic [ADDR_WIDTH-1:0] start_addr,
     logic [SIZE_WIDTH-1:0] size,
@@ -146,7 +143,6 @@ class axi_ref_model extends uvm_subscriber #(axi_seq_item);
     logic [ADDR_WIDTH-1:0] base;
     logic [ADDR_WIDTH-1:0] byte_addr;
 
-    // Invalid address: no memory update, expect DECERR
     if (!is_valid_address(exp_tr.awaddr)) begin
       exp_tr.bresp = RESP_DECERR;
       num_decerr++;
@@ -155,7 +151,6 @@ class axi_ref_model extends uvm_subscriber #(axi_seq_item);
       return;
     end
 
-    // Process every WDATA beat
     for (int i = 0; i <= exp_tr.awlen; i++) begin
       if (i >= exp_tr.wdata_q.size()) break;   
 

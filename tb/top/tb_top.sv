@@ -12,6 +12,45 @@ module tb_top;
   axi_if intf[NUM_MASTERS](clk, crif.rst_n);
   clk_rst_if crif (clk);
 
+  for (genvar i = 0; i < NUM_MASTERS; i++) begin : gen_axi_assertions
+
+    axi_assertion u_axi_assertion (
+      .clk     (clk),
+      .rst_n   (intf[i].rst_n),
+
+      .awid    (intf[i].awid),
+      .awaddr  (intf[i].awaddr),
+      .awlen   (intf[i].awlen),
+      .awsize  (intf[i].awsize),
+      .awburst (intf[i].awburst),
+      .awvalid (intf[i].awvalid),
+      .awready (intf[i].awready),
+      .wdata   (intf[i].wdata),
+      .wstrb   (intf[i].wstrb),
+      .wlast   (intf[i].wlast),
+      .wvalid  (intf[i].wvalid),
+      .wready  (intf[i].wready),
+      .bid     (intf[i].bid),
+      .bresp   (intf[i].bresp),
+      .bvalid  (intf[i].bvalid),
+      .bready  (intf[i].bready),
+      .arid    (intf[i].arid),
+      .araddr  (intf[i].araddr),
+      .arlen   (intf[i].arlen),
+      .arsize  (intf[i].arsize),
+      .arburst (intf[i].arburst),
+      .arvalid (intf[i].arvalid),
+      .arready (intf[i].arready),
+      .rid     (intf[i].rid),
+      .rdata   (intf[i].rdata),
+      .rresp   (intf[i].rresp),
+      .rlast   (intf[i].rlast),
+      .rvalid  (intf[i].rvalid),
+      .rready  (intf[i].rready)
+    );
+
+  end
+
 
   bram_wrapper_sim_wrapper dut (
 
