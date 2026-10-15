@@ -1,8 +1,8 @@
-class axi_burst_write_test extends axi_base_test;
+class axi_burst_write_read_test extends axi_base_test;
 
-  `uvm_component_utils(axi_burst_write_test)
+  `uvm_component_utils(axi_burst_write_read_test)
 
-  function new(string name = "axi_burst_write_test", uvm_component parent = null);
+  function new(string name = "axi_burst_write_read_test", uvm_component parent = null);
     super.new(name, parent);
   endfunction
 

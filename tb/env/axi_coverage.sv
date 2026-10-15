@@ -381,6 +381,7 @@ class axi_coverage extends uvm_subscriber #(axi_seq_item);
 
   // Report
   function void report_phase(uvm_phase phase);
+    real overall_coverage;
     super.report_phase(phase);
 
     `uvm_info("COV", $sformatf("Sampled %0d writes and %0d reads", num_writes, num_reads), UVM_LOW)
@@ -392,6 +393,25 @@ class axi_coverage extends uvm_subscriber #(axi_seq_item);
     `uvm_info("COV", $sformatf("cg_address     : %6.2f%%", cg_address.get_inst_coverage()),     UVM_LOW)
     `uvm_info("COV", $sformatf("cg_channel     : %6.2f%%", cg_channel.get_inst_coverage()),     UVM_LOW)
     `uvm_info("COV", $sformatf("cg_outstanding : %6.2f%%", cg_outstanding.get_inst_coverage()), UVM_LOW)
+  
+    
+    
+    overall_coverage = (
+        cg_kind.get_inst_coverage()        +
+        cg_write.get_inst_coverage()       +
+        cg_read.get_inst_coverage()        +
+        cg_rresp.get_inst_coverage()       +
+        cg_burst_type.get_inst_coverage()  +
+        cg_address.get_inst_coverage()     +
+        cg_channel.get_inst_coverage()     +
+        cg_outstanding.get_inst_coverage()
+    ) / 8.0;
+
+
+    `uvm_info("COV", $sformatf("Sampled %0d writes and %0d reads", num_writes, num_reads), UVM_LOW)
+
+    `uvm_info("COV", $sformatf("Overall Functional Coverage: %6.2f%%", overall_coverage), UVM_LOW)
+  
   endfunction
 
 endclass
